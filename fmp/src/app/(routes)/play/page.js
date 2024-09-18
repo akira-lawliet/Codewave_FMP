@@ -1,3 +1,9 @@
+import { Button } from "@nextui-org/react";
+
 export default function Play() {
-  return <>Button</>;
+  return (
+    <Button size="lg" radius="full" color="danger">
+      BEGIN!
+    </Button>
+  );
 }
