@@ -2,13 +2,17 @@
 
 import React, { useRef, useEffect, useState } from "react";
 import { PoseLandmarker, FilesetResolver, DrawingUtils } from "@mediapipe/tasks-vision";
-import { getJointAngles, compareAngles } from "@/utils/angles";
+import { getJointAngles, compareAngles, referencePoses } from "@/utils/angles";
 
-const VideoFeed = () => {
+const VideoFeed = ({setPoseState, targetIndex}) => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
 
-  const [poseState, setPoseState] = useState("loading");
+  let targetIndexLocal = 0;
+
+  useEffect(() => {
+    targetIndexLocal = targetIndex;
+  }, [targetIndex]);
 
   useEffect(() => {
     let poseLandmarker;
@@ -17,7 +21,7 @@ const VideoFeed = () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: {
-            facingMode: "environment",
+            facingMode: "user",
             width: { ideal: 1280 },
             height: { ideal: 720 },
           },
@@ -67,20 +71,20 @@ const VideoFeed = () => {
             const angles = getJointAngles(landmarks2DArray);
 
             // Tree pose
-            const target = {'left_elbow': 35.74408394883494, 'right_elbow': 45.536756987728644, 'left_knee': 173.47988629075044, 'right_knee': 24.562023028529563, 'left_shoulder': 54.48837511755496, 'right_shoulder': 29.301382414367808}
-            
-            const score = compareAngles(angles, target);
+            // const target = {'left_elbow': 35.74408394883494, 'right_elbow': 45.536756987728644, 'left_knee': 173.47988629075044, 'right_knee': 24.562023028529563, 'left_shoulder': 54.48837511755496, 'right_shoulder': 29.301382414367808}
+
+            const score = compareAngles(angles, referencePoses[targetIndexLocal.current].angles);
 
             if (score <= 95) {
-              console.log("Milyo");
+              // console.log("Milyo");
               setPoseState("correct");
             } else {
-              console.log("Milena - " + score)
+              // console.log("Milena - " + score)
               setPoseState("incorrect");
             }
           }
           else {
-            console.log("Milena - khai manche");
+            // console.log("Milena - khai manche");
             setPoseState("missing");
           }
 
@@ -115,9 +119,9 @@ const VideoFeed = () => {
           ref={videoRef}
           autoPlay
           playsInline
-          className="w-full h-full object-cover -scale-x-100"
+          className="w-full h-full object-cover"
         />
-      <canvas ref={canvasRef} width="1280" height="720" className="absolute w-full h-full left-0 top-0 -scale-x-100"></canvas>
+      <canvas ref={canvasRef} width="1280" height="720" className="absolute w-full h-full left-0 top-0"></canvas>
     </div>
   );
 };

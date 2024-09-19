@@ -2,8 +2,10 @@
 
 import VideoFeed from "@/components/VideoFeed";
 import RefPhoto from "@/components/RefPhoto";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Timer from "@/components/Timer";
+import { referencePoses } from "@/utils/angles";
+import { randomInt } from "mathjs";
 
 export default function Game() {
   const [overlayOff, setOverlayOff] = useState(false);
@@ -14,6 +16,14 @@ export default function Game() {
   const [resetSignal, setResetSignal] = useState(false);
 
   const [firstTime, setFirstTime] = useState(true);
+
+  // loading, correct, incorrect, missing
+  const [poseState, setPoseState] = useState("loading");
+  const previousPoseIndex = useRef(0);
+  const targetPoseIndex = useRef(0);
+  
+  const [score, setScore] = useState(0);
+  const scoreTimer = useRef(undefined);
 
   useEffect(() => {
     if (count > 0) {
@@ -30,8 +40,24 @@ export default function Game() {
       setResetSignal(true);
       setFirstTime(false);
       setReloadRef(false);
+
+      targetPoseIndex.current = (previousPoseIndex.current + randomInt(1, referencePoses.length - 1)) % referencePoses.length;
+      previousPoseIndex.current = targetPoseIndex.current;
+
+      clearInterval(scoreTimer.current);
+      setPoseState("incorrect");
     }
   }, [count, reloadRef]);
+
+  useEffect(() => {
+    if (poseState === "correct") {
+      scoreTimer.current = setInterval(() => {
+        setScore((score) => score + 1);
+      }, 1000);
+    } else {
+      clearInterval(scoreTimer.current);
+    }
+  }, [poseState])
 
   return (
     <>
@@ -42,20 +68,23 @@ export default function Game() {
       )}
       {overlayOff && (
         <div className="relative h-screen w-full">
-          <VideoFeed />
+          <VideoFeed setPoseState={setPoseState} targetIndex={targetPoseIndex} />
           <RefPhoto
             startTimer={setTimer}
-            src={`https://cdn.pixabay.com/photo/2024/08/24/05/02/woman-8993222_1280.jpg`}
+            src={`/poses/${referencePoses[targetPoseIndex.current].name}.jpg`}
             resetSignal={resetSignal}
             setResetSignal={setResetSignal}
           />
+          <div className="absolute top-5 left-1/2 transform -translate-x-1/2 text-white text-2xl bg-black p-2 rounded">
+            Score: {score}
+          </div>
           <div className="absolute"></div>
         </div>
       )}
       {overlayOff && timer && (
         <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 text-white bg-transparent p-6 rounded-lg w-40 h-40 flex items-center justify-center">
           <div className="text-4xl">
-            <Timer reloadRef={setReloadRef} timerValue={firstTime ? 10 : 5} />
+            <Timer reloadRef={setReloadRef} timerValue={firstTime ? 20 : 15} correctPose={poseState === "correct"} />
           </div>
         </div>
       )}

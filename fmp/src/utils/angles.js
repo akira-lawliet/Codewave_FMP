@@ -15,7 +15,7 @@ const POSES = {
   RIGHT_ANKLE: 28
 };
 
-const referencePoses = [
+export const referencePoses = [
   {
     name: "goddess",
     angles: {'left_elbow': 98.48282942495615, 'right_elbow': 109.00554781168067, 'left_knee': 97.82803220103622, 'right_knee': 94.19778120991516, 'left_shoulder': 91.6122676415941, 'right_shoulder': 102.84186864175068}
@@ -27,6 +27,10 @@ const referencePoses = [
   {
     name: "warrior",
     angles: {'left_elbow': 168.51492121292586, 'right_elbow': 174.74558545919976, 'left_knee': 172.70587611990015, 'right_knee': 99.55932878634748, 'left_shoulder': 94.21142969506964, 'right_shoulder': 97.97855272572248}
+  },
+  {
+    name: "mountain_pose",
+    angles: {'left_elbow': 173.9510098777683, 'right_elbow': 175.27411745993388, 'left_knee': 179.33174906819482, 'right_knee': 179.5152512074926, 'left_shoulder': 8.745302151376325, 'right_shoulder': 9.060307213938364}
   }
 ];
 

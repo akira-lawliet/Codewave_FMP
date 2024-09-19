@@ -3,7 +3,7 @@
 import React from "react";
 import { CircularProgress } from "@nextui-org/react";
 
-export default function Timer({ reloadRef, timerValue }) {
+export default function Timer({ reloadRef, timerValue, correctPose }) {
   const [value, setValue] = React.useState(timerValue);
 
   React.useEffect(() => {
@@ -23,7 +23,7 @@ export default function Timer({ reloadRef, timerValue }) {
   }, []);
 
   const progressColor =
-    value > 10 ? "success" : value <= 5 ? "danger" : "warning";
+    correctPose ? "success" : "danger";
 
   return (
     <CircularProgress
