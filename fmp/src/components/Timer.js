@@ -3,12 +3,20 @@
 import React from "react";
 import { CircularProgress } from "@nextui-org/react";
 
-export default function App() {
-  const [value, setValue] = React.useState(30);
+export default function Timer({ reloadRef, timerValue }) {
+  const [value, setValue] = React.useState(timerValue);
 
   React.useEffect(() => {
     const interval = setInterval(() => {
-      setValue((v) => (v <= 0 ? 0 : v - 1));
+      setValue((v) => {
+        if (v <= 0) {
+          console.log("resetting value");
+          reloadRef(true);
+          return 0;
+        }
+
+        return v - 1;
+      });
     }, 1000);
 
     return () => clearInterval(interval);
@@ -19,10 +27,15 @@ export default function App() {
 
   return (
     <CircularProgress
-      aria-label="Loading..."
-      size="lg"
-      value={(value / 30) * 100}
+      classNames={{
+        svg: "w-36 h-36 drop-shadow-md",
+        indicator: { progressColor },
+        track: "stroke-white/10",
+        value: "text-3xl font-semibold text-white",
+      }}
+      value={(value / timerValue) * 100}
       color={progressColor}
+      strokeWidth={4}
       showValueLabel={true}
       valueLabel={`${value}s`}
     />
