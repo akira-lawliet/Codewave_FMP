@@ -8,8 +8,8 @@ export default function Landing() {
           <div className="max-w-md">
             <h1 className="text-5xl font-bold">Posture Maniac</h1>
             <p className="py-6">
-              Try matching the posture shown in the upcoming slide to test your
-              fitness !!!
+              Try matching the posture shown in the upcoming slides to up your
+              fitness!!!
             </p>
             <Link href="/game">
               <button className="btn btn-primary">Play</button>
